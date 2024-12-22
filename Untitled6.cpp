@@ -8,8 +8,19 @@
 #include<climits>
 #include<utility>
 #include<vector>
-#define big 10000000000
+#define big 1000000
 using namespace std;
+int small(int a, int b) {
+    int smallest = INT_MAX; // Initialize with the largest possible integer
+    
+    if (a < b) {
+        smallest = a;
+    } else {
+        smallest = b;
+    }
+
+    return smallest;
+}
 void seed() {
     srand(time(0)); 
 }
@@ -47,6 +58,8 @@ sponge(int b)
 array=new int[s];
 last=s-1;
 a=0;
+for(int i=0;i<s;i++)
+{array[i]=-1;}
 }
 void push(int x)
 {if(a==s)
@@ -111,88 +124,120 @@ l[b].push_back({a,w});
         }
     }
 };
-void dikefunction(graph &d, graph &g) {
-    sponge unvisited(6);
-    sponge visited(6);
-    
-    // Push all nodes to the unvisited sponge
+int checkstatus(int ve,sponge uv,sponge v)
+{int check=0;
+    int t=0;
+    while(t!=uv.last && uv.array[t]!=ve)
+    {
+        t++;
+    }
+    if(uv.array[t]==ve)
+    {check++ ;}
+    t=0;
+     while(t!=v.last && v.array[t]!=ve)
+    {
+        t++;
+    }
+    if(v.array[t]!=ve)
+    {check++ ;}
+
+    return check;
+};
+void dikefunction(graph &d,graph &g)
+{sponge unvisited(6);
+sponge visited(6);
     for (int i = 0; i < g.s; ++i) {
-        unvisited.push(i);
-    }
-    cout << "Unvisited array: ";
-    unvisited.display();
-    cout << endl;
-    cout << "Visited array: ";
-    visited.display();
-    cout << endl;
+   unvisited.push(i);
+}
+cout<<"unvisited array: ";
+ unvisited.display();
+ cout<<endl;
+ cout<<"  visited array: ";
+ visited.display();
+ cout<<endl;
+//unvisited and visited sponges have been created
+//creating dike table here
+int r=g.s;
+int c=3;
+vector<vector<int>> array;  
+array.resize(r,vector<int>(c));
+//check status
 
-    // Initialize Dijkstra table (distance table)
-    int r = g.s;
-    int c = 3; // Columns: node index, shortest distance, previous node index
-    vector<vector<int>> array;  
-    array.resize(r, vector<int>(c));
-
-    // Initialize the table
-    for (int i = 0; i < g.s; i++) {
-        array[i][0] = i;         // node index
-        array[i][1] = INT_MAX;   // distance from source (infinity initially)
-        array[i][2] = -1;        // previous node in the path (no previous node initially)
-    }
-
-    // Set distance to source (node 0) to 0
-    array[0][1] = 0;
-
-    while (!unvisited.empty()) {
-        int u = -1;
-        int min_distance = INT_MAX;
-
-        // Select the node with the smallest distance from the unvisited nodes
-        for (int i = 0; i < unvisited.last; i++) {
-            int node = unvisited.array[i];
-            if (array[node][1] < min_distance) {
-                min_distance = array[node][1];
-                u = node;
-            }
-        }
-
-        // Remove node from unvisited
-        unvisited.pop(u);
-
-        // Update distances for neighbors of u
-        for (auto neighbor : g.l[u]) {
-            int v = neighbor.first;  // neighbor node
-            int weight = neighbor.second; // edge weight
-
-            if (array[u][1] + weight < array[v][1]) {
-                array[v][1] = array[u][1] + weight;  // update shortest distance
-                array[v][2] = u;  // update previous node
-            }
-        }
-
-        // Display the Dijkstra table at each step
-        cout << "Dijkstra table after processing node " << u << ":\n";
-        for (int i = 0; i < r; i++) {
-            for (int j = 0; j < c; j++) {
-                cout << array[i][j] << " ";
-            }
-            cout << endl;
-        }
-        cout << "---------------------\n";
-    }
-
-    // Final Dijkstra table
-    cout << "Dijkstra table (Final):\n";
-    for (int i = 0; i < r; i++) {
-        for (int j = 0; j < c; j++) {
-            cout << array[i][j] << " ";
+//storing 
+for(int i=0;i<g.s;i++)
+{
+    array[i][0]=i;
+};
+for(int i=0;i<g.s;i++)
+{
+    array[i][1]=big;
+};
+//calculation
+for(int k=0;k<6;k++)
+{
+//i=small();
+int i=0;
+    for (auto neighbor : g.l[i]) {
+                
+                 cout<<neighbor.second;//w
+                 cout<<neighbor.first;//n
+                 cout<<"nm"<<endl;
+    if(array[neighbor.first][1]==-1||array[neighbor.first][2]==-1){
+                array[neighbor.first][1]=neighbor.second;
+                array[neighbor.first][2]=i;}
+    else
+    {if(neighbor.second<array[neighbor.first][1])
+        {array[neighbor.first][1]=neighbor.second;
+            array[neighbor.first][2]=i;
+        };
+    };
+for (auto neighbor : g.l[i]) {
+    const int a=neighbor.second;
+    small(neighbor.second,a);
+    cout<<"small";
+    cout<<small;
+    
+};
+}; 
+for (int i = 0; i < r; i++) {
+  for (int j = 0; j < c; j++) {
+    cout << array[i][j] << " ";
         }
         cout << endl;
     }
-}
+cout<<"next"<<endl;
 
+cout<<endl;
+k++;
+};
+
+
+
+
+
+
+
+//displaying the diketable
+cout<<"dike table using dijkstru theorem"<<endl;
+for (int i = 0; i < r; i++) {
+  for (int j = 0; j < c; j++) {
+    cout << array[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+};
+
+
+//int findobstacle()
+
+//int storeingraph()
+
+//every graph is a path
+//run dijkstru
 int main()
 {seed();
-cout<<"here alex will find coordinates of the destination by using IR sensors installed in its machine body ,to proceed code i have generated random coordinates"<<endl;
+cout<<"Here alex will find coordinates of the destination by using IR sensors installed in its machine body ,to proceed code i have generated random coordinates"<<endl;
 pair<int,int> coordinates=findcd(100);
 cout<<"coordinates are "<<"("<<coordinates.first<<","<<coordinates.second<<")"<<endl;
 int d=distance(0,0,coordinates.first, coordinates.second);
