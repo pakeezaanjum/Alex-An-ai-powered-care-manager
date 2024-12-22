@@ -111,51 +111,85 @@ l[b].push_back({a,w});
         }
     }
 };
-void dikefunction(graph &d,graph &g)
-{sponge unvisited(6);
-sponge visited(6);
-    for (int i = 0; i < g.s; ++i) {
-   unvisited.push(i);
-}
- unvisited.display();   
+void dikefunction(graph &d, graph &g) {
+    sponge unvisited(6);
+    sponge visited(6);
     
-};
-class diketable
-{public:
-int r;
-int c;
-vector<vector<int>> array;
-diketable(int a,int b)
-{r=a;
-c=b;
-array.resize(r,vector<int>(c));
-}
-   
-        
-void storedikedata()
-{ 
-//array[r][c] = {
-    //    {1, 2, 3, 4},
-     //   {5, 6, 7, 8},}
-}    
-void displaydiketable()
-{
-for (int i = 0; i < r; i++) {
-  for (int j = 0; j < c; j++) {
-    cout << array[i][j] << " ";
+    // Push all nodes to the unvisited sponge
+    for (int i = 0; i < g.s; ++i) {
+        unvisited.push(i);
+    }
+    cout << "Unvisited array: ";
+    unvisited.display();
+    cout << endl;
+    cout << "Visited array: ";
+    visited.display();
+    cout << endl;
+
+    // Initialize Dijkstra table (distance table)
+    int r = g.s;
+    int c = 3; // Columns: node index, shortest distance, previous node index
+    vector<vector<int>> array;  
+    array.resize(r, vector<int>(c));
+
+    // Initialize the table
+    for (int i = 0; i < g.s; i++) {
+        array[i][0] = i;         // node index
+        array[i][1] = INT_MAX;   // distance from source (infinity initially)
+        array[i][2] = -1;        // previous node in the path (no previous node initially)
+    }
+
+    // Set distance to source (node 0) to 0
+    array[0][1] = 0;
+
+    while (!unvisited.empty()) {
+        int u = -1;
+        int min_distance = INT_MAX;
+
+        // Select the node with the smallest distance from the unvisited nodes
+        for (int i = 0; i < unvisited.last; i++) {
+            int node = unvisited.array[i];
+            if (array[node][1] < min_distance) {
+                min_distance = array[node][1];
+                u = node;
+            }
+        }
+
+        // Remove node from unvisited
+        unvisited.pop(u);
+
+        // Update distances for neighbors of u
+        for (auto neighbor : g.l[u]) {
+            int v = neighbor.first;  // neighbor node
+            int weight = neighbor.second; // edge weight
+
+            if (array[u][1] + weight < array[v][1]) {
+                array[v][1] = array[u][1] + weight;  // update shortest distance
+                array[v][2] = u;  // update previous node
+            }
+        }
+
+        // Display the Dijkstra table at each step
+        cout << "Dijkstra table after processing node " << u << ":\n";
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                cout << array[i][j] << " ";
+            }
+            cout << endl;
+        }
+        cout << "---------------------\n";
+    }
+
+    // Final Dijkstra table
+    cout << "Dijkstra table (Final):\n";
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            cout << array[i][j] << " ";
         }
         cout << endl;
     }
 }
 
-};
-
-//int findobstacle()
-
-//int storeingraph()
-
-//every graph is a path
-//run dijkstru
 int main()
 {seed();
 cout<<"here alex will find coordinates of the destination by using IR sensors installed in its machine body ,to proceed code i have generated random coordinates"<<endl;
