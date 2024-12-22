@@ -66,6 +66,14 @@ graph generateRandomGraph(int n) {
     return g;
 }
 
+void printDijkstraTable(const vector<int>& dist, const vector<int>& parent, int node_count) {
+    cout << "Dijkstra table after processing node:\n";
+    for (int i = 0; i < node_count; i++) {
+        cout << i << " " << dist[i] << " " << parent[i] << "\n";
+    }
+    cout << "---------------------\n";
+}
+
 void findShortestPath(graph &g, int source) {
     vector<int> dist(g.s, INT_MAX); // Distance table initialized to infinity
     vector<int> parent(g.s, -1);    // Parent array to track the shortest path
@@ -103,9 +111,12 @@ void findShortestPath(graph &g, int source) {
                 parent[v] = u;
             }
         }
+
+        // Print the Dijkstra table after processing the current node
+        printDijkstraTable(dist, parent, g.s);
     }
 
-    // Print shortest paths from the source
+    // Print the final shortest paths from the source
     cout << "Shortest paths from node " << source << ":\n";
     for (int i = 0; i < g.s; i++) {
         cout << "Node " << i << " distance: " << dist[i] << ", Path: ";
