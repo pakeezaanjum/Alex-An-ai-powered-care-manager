@@ -11,7 +11,7 @@ struct Task {
     string date;
     string time;
     string description;
-    string category;  // Added category for task classification (e.g., hydration, workout)
+    string category;  // Added category for task classification (e.g., hydration, workout, meeting, etc.)
     string status;    // Track task status (e.g., Pending, Completed)
     
     Task(string d, string t, string desc, string cat = "General") 
@@ -110,4 +110,95 @@ public:
             if (!map[i].empty()) {
                 for (HashNode* node : map[i]) {
                     cout << "Task: " << node->taskDescription << ", Completed: " << (node->isCompleted ? "Yes" : "No")
-                         << ", Date
+                         << ", Date: " << node->date << ", Time: " << node->time << endl;
+                }
+            }
+        }
+    }
+};
+
+// Function to get the current date and time
+void displayCurrentDateTime() {
+    time_t now = time(0);
+    tm* ltm = localtime(&now);
+
+    cout << "Alex: Today's date is: " << 1900 + ltm->tm_year << "-"
+         << 1 + ltm->tm_mon << "-" << ltm->tm_mday << endl;
+    cout << "Alex: The current time is: " << 1 + ltm->tm_hour << ":"
+         << 1 + ltm->tm_min << ":" << 1 + ltm->tm_sec << endl;
+}
+
+// Main Function
+int main() {
+    // Display current date and time
+    displayCurrentDateTime();
+
+    // Create a user
+    User user("Alice", "12345-6789012-3", "TechCorp", "Software Engineer");
+
+    // Add tasks to the user's queue (doctor appointments, meetings, etc.)
+    user.addTask("2024-12-22", "10:00 AM", "Meeting with Bob");
+    user.addTask("2024-12-22", "02:00 PM", "Doctor's appointment");
+
+    // Display user info and tasks
+    user.displayUser();
+    user.displayTasks();
+
+    // HashMap to store completed tasks
+    HashMap completedTasks;
+
+    // Simulate task completion
+    while (!user.tasks.empty()) {
+        Task* currentTask = user.getNextTask();
+
+        // Robot asks if the task is completed
+        cout << "Alex: Did you complete the task: " << currentTask->description
+             << " scheduled for " << currentTask->date << " at " << currentTask->time << "? (yes/no): ";
+        string response;
+        cin >> response;
+
+        // Update task status based on user input
+        bool isCompleted = (response == "yes");
+        currentTask->setStatus(isCompleted ? "Completed" : "No");
+
+        // Record completed task in HashMap
+        completedTasks.addRecord(currentTask->description, isCompleted, currentTask->date, currentTask->time);
+
+        delete currentTask; // Free dynamically allocated memory
+    }
+
+    // Display completed tasks
+    cout << "\nAlex: Here is the record of your completed tasks:\n";
+    completedTasks.displayRecords();
+
+    // Periodic Tasks (Hydration, Workout, Sleep Schedule)
+    user.addTask("2024-12-22", "08:00 AM", "Hydrate", "Health");
+    user.addTask("2024-12-22", "07:00 PM", "Workout", "Health");
+    user.addTask("2024-12-22", "10:00 PM", "Sleep Schedule", "Health");
+
+    // Simulate task completion for periodic tasks
+    while (!user.tasks.empty()) {
+        Task* currentTask = user.getNextTask();
+
+        // Robot asks if the task is completed
+        cout << "Alex: Did you complete the task: " << currentTask->description
+             << " scheduled for " << currentTask->date << " at " << currentTask->time << "? (yes/no): ";
+        string response;
+        cin >> response;
+
+        // Update task status based on user input
+        bool isCompleted = (response == "yes");
+        currentTask->setStatus(isCompleted ? "Completed" : "No");
+
+        // Record completed task in HashMap
+        completedTasks.addRecord(currentTask->description, isCompleted, currentTask->date, currentTask->time);
+
+        delete currentTask; // Free dynamically allocated memory
+    }
+
+    // Display completed periodic tasks
+    cout << "\nAlex: Here is the record of your completed tasks:\n";
+    completedTasks.displayRecords();
+
+    return 0;
+}
