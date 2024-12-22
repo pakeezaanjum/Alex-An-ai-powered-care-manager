@@ -127,6 +127,21 @@ void displayCurrentDateTime() {
     cout << "Alex: The current time is: " << 1 + ltm->tm_hour << ":"
          << 1 + ltm->tm_min << ":" << 1 + ltm->tm_sec << endl;
 }
+// Function to handle emergency circumstances (fire alarm)
+void EmergencyCircumstances(bool fireDetected) {
+    if (fireDetected) {
+        cout << "Alex: Emergency! Fire alarm has been triggered." << endl;
+        cout << "Alex: Initiating emergency protocol..." << endl;
+        cout << "Alex: Calling 911... Please stay calm." << endl;
+        cout << "Alex: Searching for the nearest emergency exits..." << endl;
+        cout << "Alex: The nearest emergency exit is located to the left of the living room. Please proceed immediately!" << endl;
+        cout << "Alex: If possible, use the emergency phone located in the hallway to confirm the situation." << endl;
+        cout << "Alex: Please exit the house immediately and avoid using elevators during the emergency." << endl;
+    } else {
+        cout << "Alex: No fire detected. All systems are normal." << endl;
+    }
+}
+
 
 // Main Function
 int main() {
@@ -199,6 +214,12 @@ int main() {
     // Display completed periodic tasks
     cout << "\nAlex: Here is the record of your completed tasks:\n";
     completedTasks.displayRecords();
+    // Simulating fire detection
+bool fireDetected = true; // Change to false to simulate no fire
+
+// Calling the EmergencyCircumstances function
+EmergencyCircumstances(fireDetected);
+
 
     return 0;
 }
