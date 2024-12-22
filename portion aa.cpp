@@ -3,8 +3,10 @@
 #include <queue>
 #include <ctime>
 #include <string>
-#define HASH_SIZE 1000 // Reduce size for memory efficiency
+#include <map>
 using namespace std;
+
+#define HASH_SIZE 1000 // Reduce size for memory efficiency
 
 // Task structure (Updated)
 struct Task {
@@ -20,6 +22,16 @@ struct Task {
     void setStatus(string newStatus) {
         status = newStatus;
     }
+};
+
+// TaskTreeNode for Binary Search Tree (BST)
+struct TaskTreeNode {
+    string description;
+    int status;  // 1 for completed, 0 for not completed
+    TaskTreeNode* left;
+    TaskTreeNode* right;
+
+    TaskTreeNode(string desc, int stat) : description(desc), status(stat), left(nullptr), right(nullptr) {}
 };
 
 // User class (Updated)
@@ -117,7 +129,7 @@ public:
     }
 };
 
-// Function to get the current date and time
+// Function to display current date and time
 void displayCurrentDateTime() {
     time_t now = time(0);
     tm* ltm = localtime(&now);
@@ -127,6 +139,7 @@ void displayCurrentDateTime() {
     cout << "Alex: The current time is: " << 1 + ltm->tm_hour << ":"
          << 1 + ltm->tm_min << ":" << 1 + ltm->tm_sec << endl;
 }
+
 // Function to handle emergency circumstances (fire alarm)
 void EmergencyCircumstances(bool fireDetected) {
     if (fireDetected) {
@@ -142,6 +155,29 @@ void EmergencyCircumstances(bool fireDetected) {
     }
 }
 
+// Function to insert tasks into the BST
+TaskTreeNode* insertTask(TaskTreeNode* root, string description, int status) {
+    if (root == nullptr) {
+        return new TaskTreeNode(description, status);
+    }
+
+    if (description < root->description) {
+        root->left = insertTask(root->left, description, status);
+    } else {
+        root->right = insertTask(root->right, description, status);
+    }
+    return root;
+}
+
+// Function to display the table of tasks (task name and status)
+void displayTaskTable(TaskTreeNode* root) {
+    if (root == nullptr) {
+        return;
+    }
+    displayTaskTable(root->left);
+    cout << "Task: " << root->description << ", Status: " << (root->status ? "1 (Completed)" : "0 (Not Completed)") << endl;
+    displayTaskTable(root->right);
+}
 
 // Main Function
 int main() {
@@ -162,6 +198,9 @@ int main() {
     // HashMap to store completed tasks
     HashMap completedTasks;
 
+    // BST for task status
+    TaskTreeNode* root = nullptr;
+
     // Simulate task completion
     while (!user.tasks.empty()) {
         Task* currentTask = user.getNextTask();
@@ -178,6 +217,9 @@ int main() {
 
         // Record completed task in HashMap
         completedTasks.addRecord(currentTask->description, isCompleted, currentTask->date, currentTask->time);
+
+        // Insert task into BST
+        root = insertTask(root, currentTask->description, isCompleted);
 
         delete currentTask; // Free dynamically allocated memory
     }
@@ -208,18 +250,25 @@ int main() {
         // Record completed task in HashMap
         completedTasks.addRecord(currentTask->description, isCompleted, currentTask->date, currentTask->time);
 
+        // Insert task into BST
+        root = insertTask(root, currentTask->description, isCompleted);
+
         delete currentTask; // Free dynamically allocated memory
     }
 
     // Display completed periodic tasks
     cout << "\nAlex: Here is the record of your completed tasks:\n";
     completedTasks.displayRecords();
+
+    // Display Task Table at the end of execution
+    cout << "\nAlex: Displaying today's task completion table:" << endl;
+    displayTaskTable(root);
+
     // Simulating fire detection
-bool fireDetected = true; // Change to false to simulate no fire
+    bool fireDetected = true; // Change to `false` to simulate no fire
 
-// Calling the EmergencyCircumstances function
-EmergencyCircumstances(fireDetected);
-
+    // Calling the EmergencyCircumstances function
+    EmergencyCircumstances(fireDetected);
 
     return 0;
 }
