@@ -10,6 +10,73 @@
 #include<vector>
 #define big 1000000
 using namespace std;
+graph generateRandomGraph(int n) {
+    graph g(n);
+    // Add random edges with random weights
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            int weight = random(10);  // Random weight between 0 and 10
+            g.addedge(i, j, weight);
+        }
+    }
+    return g;
+}
+
+void findShortestPath(graph &g, int source) {
+    sponge unvisited(g.s);
+    sponge visited(g.s);
+    int r = g.s;
+    int c = 3;
+    vector<vector<int>> array;
+    array.resize(r, vector<int>(c));
+
+    // Initialize the table
+    for (int i = 0; i < g.s; i++) {
+        array[i][0] = i;
+        array[i][1] = INT_MAX;
+        array[i][2] = -1;
+    }
+
+    array[source][1] = 0;
+
+    while (!unvisited.empty()) {
+        int u = -1;
+        int min_distance = INT_MAX;
+
+        for (int i = 0; i < unvisited.last; i++) {
+            int node = unvisited.array[i];
+            if (array[node][1] < min_distance) {
+                min_distance = array[node][1];
+                u = node;
+            }
+        }
+
+        unvisited.pop(u);
+
+        for (auto neighbor : g.l[u]) {
+            int v = neighbor.first;
+            int weight = neighbor.second;
+
+            if (array[u][1] + weight < array[v][1]) {
+                array[v][1] = array[u][1] + weight;
+                array[v][2] = u;
+            }
+        }
+    }
+
+    // Print shortest paths from the source
+    cout << "Shortest paths from node " << source << ":\n";
+    for (int i = 0; i < g.s; i++) {
+        cout << "Node " << i << " distance: " << array[i][1] << ", Path: ";
+        int v = i;
+        while (array[v][2] != -1) {
+            cout << v << " <- ";
+            v = array[v][2];
+        }
+        cout << source << endl;
+    }
+}
+
 int small(int a, int b) {
     int smallest = INT_MAX; // Initialize with the largest possible integer
     
