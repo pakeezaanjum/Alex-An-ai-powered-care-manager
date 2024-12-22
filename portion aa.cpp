@@ -3,10 +3,7 @@
 #include <queue>
 #include <ctime>
 #include <string>
-#include <map>
 using namespace std;
-
-#define HASH_SIZE 1000 // Reduce size for memory efficiency
 
 // Task structure (Updated)
 struct Task {
@@ -85,50 +82,6 @@ public:
     }
 };
 
-// Simple HashMap to store completed tasks
-class HashMap {
-private:
-    struct HashNode {
-        string taskDescription;
-        bool isCompleted;
-        string date;
-        string time;
-
-        HashNode(string desc, bool status, string d, string t) 
-            : taskDescription(desc), isCompleted(status), date(d), time(t) {}
-    };
-
-    vector<HashNode*> map[HASH_SIZE];
-
-    int hashFunction(string key) {
-        int hash = 0;
-        for (char ch : key) {
-            hash = (hash * 31 + ch) % HASH_SIZE;
-        }
-        return hash;
-    }
-
-public:
-    void addRecord(string taskDescription, bool status, string date, string time) {
-        int index = hashFunction(taskDescription);
-        map[index].push_back(new HashNode(taskDescription, status, date, time));
-        cout << "Alex: Task recorded in HashMap: " << taskDescription << " (Completed: " << (status ? "Yes" : "No") 
-             << ") on " << date << " at " << time << endl;
-    }
-
-    void displayRecords() {
-        cout << "Alex: Here is the list of your completed tasks:" << endl;
-        for (int i = 0; i < HASH_SIZE; i++) {
-            if (!map[i].empty()) {
-                for (HashNode* node : map[i]) {
-                    cout << "Task: " << node->taskDescription << ", Completed: " << (node->isCompleted ? "Yes" : "No")
-                         << ", Date: " << node->date << ", Time: " << node->time << endl;
-                }
-            }
-        }
-    }
-};
-
 // Function to display current date and time
 void displayCurrentDateTime() {
     time_t now = time(0);
@@ -176,7 +129,6 @@ void displayTaskTable(TaskTreeNode* root) {
     }
     displayTaskTable(root->left);
     cout << "Task: " << root->description << ", Status: " << (root->status ? "1 (Completed)" : "0 (Not Completed)") << endl;
-    displayTaskTable(root->right);
 }
 
 // Main Function
@@ -195,9 +147,6 @@ int main() {
     user.displayUser();
     user.displayTasks();
 
-    // HashMap to store completed tasks
-    HashMap completedTasks;
-
     // BST for task status
     TaskTreeNode* root = nullptr;
 
@@ -215,9 +164,6 @@ int main() {
         bool isCompleted = (response == "yes");
         currentTask->setStatus(isCompleted ? "Completed" : "No");
 
-        // Record completed task in HashMap
-        completedTasks.addRecord(currentTask->description, isCompleted, currentTask->date, currentTask->time);
-
         // Insert task into BST
         root = insertTask(root, currentTask->description, isCompleted);
 
@@ -226,7 +172,7 @@ int main() {
 
     // Display completed tasks
     cout << "\nAlex: Here is the record of your completed tasks:\n";
-    completedTasks.displayRecords();
+    displayTaskTable(root);
 
     // Periodic Tasks (Hydration, Workout, Sleep Schedule)
     user.addTask("2024-12-22", "08:00 AM", "Hydrate", "Health");
@@ -247,9 +193,6 @@ int main() {
         bool isCompleted = (response == "yes");
         currentTask->setStatus(isCompleted ? "Completed" : "No");
 
-        // Record completed task in HashMap
-        completedTasks.addRecord(currentTask->description, isCompleted, currentTask->date, currentTask->time);
-
         // Insert task into BST
         root = insertTask(root, currentTask->description, isCompleted);
 
@@ -258,10 +201,6 @@ int main() {
 
     // Display completed periodic tasks
     cout << "\nAlex: Here is the record of your completed tasks:\n";
-    completedTasks.displayRecords();
-
-    // Display Task Table at the end of execution
-    cout << "\nAlex: Displaying today's task completion table:" << endl;
     displayTaskTable(root);
 
     // Simulating fire detection
