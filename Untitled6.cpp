@@ -132,10 +132,17 @@ void findShortestPath(graph &g, int source) {
 int main() {
     srand(time(0));
 
+    // Alex finds the destination coordinates using IR sensors
+    cout << "Here Alex will find coordinates of the destination by using IR sensors installed in its machine body, to proceed the code I have generated random coordinates." << endl;
+
     // Find random coordinates for the destination
     pair<int, int> coordinates = findcd(100);
     cout << "Coordinates are (" << coordinates.first << "," << coordinates.second << ")" << endl;
+
+    // Calculate distance between (0, 0) and the random destination
     double d = distance(0, 0, coordinates.first, coordinates.second);
+
+    // Calculate the tyre rotations needed based on the distance
     rotations(d);
 
     // Create a graph with 6 nodes
