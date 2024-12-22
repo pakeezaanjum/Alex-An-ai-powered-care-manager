@@ -1,53 +1,54 @@
-struct AVLNode {
-    int key;
-    string category;
-    AVLNode* left;
-    AVLNode* right;
-    int height;
+#include <iostream>
+#include <vector>
+using namespace std;
 
-    AVLNode(int k, string cat) : key(k), category(cat), left(nullptr), right(nullptr), height(1) {}
+class Graph {
+public:
+    vector<vector<pair<int, int>>> l;
+
+    Graph(int n) {
+        l.resize(n);
+    }
+
+    void addEdge(int u, int v, int w) {
+        l[u].emplace_back(v, w);
+    }
 };
 
-class AVLTree {
-private:
-    AVLNode* root;
+int main() {
+    int n = 5;
+    Graph g(n);
 
-    int height(AVLNode* node) {
-        return node ? node->height : 0;
+    // Adding edges
+    g.addEdge(0, 1, 10);
+    g.addEdge(0, 2, 20);
+    g.addEdge(1, 2, 30);
+    g.addEdge(2, 3, 40);
+    g.addEdge(3, 4, 50);
+
+    // 2D array to store edge information
+    int array[n][3];
+
+    // Traverse the graph using a classic for loop
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < g.l[i].size(); ++j) {
+            cout << i;
+            cout << " ----> ";  
+            cout << g.l[i][j].first << "(" << g.l[i][j].second << ")";
+
+            // Update the array
+            array[g.l[i][j].first][1] = g.l[i][j].second;  // Store the edge weight
+            array[g.l[i][j].first][2] = i;  // Store the original node (i)
+        }
     }
 
-    int getBalance(AVLNode* node) {
-        return node ? height(node->left) - height(node->right) : 0;
+    // Print the array to verify updates
+    cout << "\nArray contents after update:\n";
+    for (int i = 0; i < n; i++) {
+        cout << "Node " << i << ": ";
+        cout << "Weight = " << array[i][1] << ", ";
+        cout << "Original Node = " << array[i][2] << endl;
     }
 
-    AVLNode* rotateRight(AVLNode* y) {
-        AVLNode* x = y->left;
-        AVLNode* T = x->right;
-        x->right = y;
-        y->left = T;
-        y->height = max(height(y->left), height(y->right)) + 1;
-        x->height = max(height(x->left), height(x->right)) + 1;
-        return x;
-    }
-
-    AVLNode* rotateLeft(AVLNode* x) {
-        AVLNode* y = x->right;
-        AVLNode* T = y->left;
-        y->left = x;
-        x->right = T;
-        x->height = max(height(x->left), height(x->right)) + 1;
-        y->height = max(height(y->left), height(y->right)) + 1;
-        return y;
-    }
-
-    AVLNode* insert(AVLNode* node, int key, string category) {
-        if (!node) return new AVLNode(key, category);
-
-        if (key < node->key)
-            node->left = insert(node->left, key, category);
-        else if (key > node->key)
-            node->right = insert(node->right, key, category);
-        else
-            return node;
-
-        node->height = 1 + max(height(node
+    return 0;
+}
